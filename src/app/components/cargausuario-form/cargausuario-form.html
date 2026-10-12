@@ -1,0 +1,134 @@
+<main class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-[1.05fr_0.95fr]">
+  <section class="flex min-h-screen flex-col px-5 sm:px-10 lg:px-12 xl:px-20">
+    <header class="pt-8 sm:pt-15">
+      <p class="text-3xl font-bold tracking-[0.16em] text-blue-800 uppercase">
+        Licitaciones Venezuela
+      </p>
+    </header>
+
+    <div class="flex flex-1 items-center justify-center py-10 sm:py-14">
+      <div class="w-full max-w-md">
+        <div class="mb-8">
+          <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Crear usuario
+          </h1>
+          <p class="mt-3 text-base leading-7 text-slate-600 sm:text-lg">
+            Completa los datos para agregar un nuevo usuario.
+          </p>
+        </div>
+
+        <form class="grid grid-cols-1 gap-5" (ngSubmit)="onSubmit()" novalidate>
+          <div>
+            <label class="mb-2 block text-medium font-semibold text-slate-700" for="nombre">
+              Nombre completo
+            </label>
+            <input
+              class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
+              type="text"
+              id="nombre"
+              [formField]="usuarioForm.nombre"
+              placeholder="Ej. María Pérez"
+              autocomplete="name"
+            />
+            @if (usuarioForm.nombre().touched() && usuarioForm.nombre().invalid()) {
+              <ul class="mt-2 space-y-1 text-sm text-red-700" aria-live="polite">
+                @for (error of usuarioForm.nombre().errors(); track error.kind) {
+                  <li>{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-slate-700" for="email">
+              Correo electrónico
+            </label>
+            <input
+              class="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
+              type="email"
+              id="email"
+              [formField]="usuarioForm.email"
+              placeholder="nombre@empresa.com"
+              autocomplete="email"
+            />
+            @if (usuarioForm.email().touched() && usuarioForm.email().invalid()) {
+              <ul class="mt-2 space-y-1 text-sm text-red-700" aria-live="polite">
+                @for (error of usuarioForm.email().errors(); track error.kind) {
+                  <li>{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-semibold text-slate-700" for="paisTelefono">
+              País y código telefónico
+            </label>
+            <select
+              class="mb-3 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
+              id="paisTelefono"
+              [formField]="usuarioForm.paisTelefono"
+              autocomplete="tel-country-code"
+            >
+              @for (country of phoneCountries; track country.code) {
+                <option [value]="country.code">{{ country.name }} ({{ country.callingCode }})</option>
+              }
+            </select>
+            <label class="mb-2 block text-sm font-semibold text-slate-700" for="telefono">
+              Número de teléfono
+            </label>
+            <div class="flex items-center rounded-lg border border-slate-300 bg-white shadow-sm transition focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-600/15">
+              <span class="shrink-0 border-r border-slate-200 px-3 py-3 text-sm font-semibold text-slate-600">
+                +{{ getPhoneCallingCode(usuarioForm.paisTelefono().value()) }}
+              </span>
+              <input
+                class="min-w-0 flex-1 rounded-r-lg bg-transparent px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400"
+                type="tel"
+                id="telefono"
+                [formField]="usuarioForm.telefono"
+                [placeholder]="phonePlaceholder()"
+                autocomplete="tel-national"
+                inputmode="tel"
+                aria-describedby="telefono-ayuda"
+              />
+            </div>
+            <p class="mt-2 text-xs leading-5 text-slate-500" id="telefono-ayuda">
+              Selecciona el país e ingresa el número nacional, incluyendo el prefijo local si aplica.
+            </p>
+            @if (usuarioForm.telefono().touched() && usuarioForm.telefono().invalid()) {
+              <ul class="mt-2 space-y-1 text-sm text-red-700" aria-live="polite">
+                @for (error of usuarioForm.telefono().errors(); track error.kind) {
+                  <li>{{ error.message }}</li>
+                }
+              </ul>
+            }
+          </div>
+
+          <button
+            class="mt-2 w-full rounded-lg bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 active:bg-blue-950"
+            type="submit"
+          >
+            Crear usuario
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="border-t border-slate-200 py-5 text-center text-xs leading-5 text-slate-500 sm:text-left sm:text-sm">
+      &copy; {{ copyrightYear }} Licitaciones Venezuela. Todos los derechos reservados.
+    </footer>
+  </section>
+
+  <aside class="relative isolate min-h-56 overflow-hidden bg-blue-950 sm:min-h-72 lg:min-h-screen">
+    <picture class="pointer-events-none absolute inset-0 z-0 block h-full w-full">
+      <source media="(max-width: 640px)" [srcset]="mobileHeaderImageUrl" />
+      <img
+        class="h-full w-full object-cover object-center"
+        [src]="headerImageUrl"
+        alt=""
+        aria-hidden="true"
+      />
+    </picture>
+    <div class="pointer-events-none absolute inset-0 z-10 bg-blue-950/55"></div>
+  </aside>
+</main>
