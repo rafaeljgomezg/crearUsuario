@@ -118,7 +118,7 @@ export class CargausuarioForm {
     };
 
     // Reemplaza con la Production URL de tu nodo Webhook en n8n
-    const webhookUrl = 'http://198.46.233.201:5678/webhook-test/38f259d1-00de-483e-b8c4-c1ca404b68fd';
+    const webhookUrl = 'http://198.46.233.201:5678/webhook/38f259d1-00de-483e-b8c4-c1ca404b68fd';
 
     this.http.post(webhookUrl, payload).subscribe({
       next: (response) => {
