@@ -1,4 +1,6 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import {
   email,
   form,
@@ -39,6 +41,12 @@ interface PhoneCountryOption {
   templateUrl: './cargausuario-form.html',
 })
 export class CargausuarioForm {
+
+  constructor() {}
+
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  
   private readonly businessImageIds = [
     '1497366754035-f200968a6e72',
     '1497366216548-37526070297c',
@@ -89,7 +97,7 @@ export class CargausuarioForm {
   });
 
   onSubmit() {
-    const formState = this.usuarioForm();
+   const formState = this.usuarioForm();
     if (formState.invalid()) {
       formState.markAsTouched();
       return;
@@ -102,12 +110,27 @@ export class CargausuarioForm {
       return;
     }
 
-    console.log({
+    const payload = {
       nombre: formValue.nombre.trim(),
       email: formValue.email.trim(),
       codigoPais: `+${getCountryCallingCode(formValue.paisTelefono)}`,
-      telefono: phoneNumber.number,
+      telefono: phoneNumber.number, // Formato internacional limpio validado
+    };
+
+    // Reemplaza con la Production URL de tu nodo Webhook en n8n
+    const webhookUrl = 'http://198.46.233.201:5678/webhook-test/38f259d1-00de-483e-b8c4-c1ca404b68fd';
+
+    this.http.post(webhookUrl, payload).subscribe({
+      next: (response) => {
+        // Redirige a tu página de éxito o agradecimiento
+        this.router.navigate(['/gracias']);
+      },
+      error: (error) => {
+        console.error('Error al registrar usuario:', error);
+        alert('Hubo un error al procesar el registro. Por favor, intenta de nuevo.');
+      }
     });
+
   }
 
   getPhoneCallingCode(country: CountryCode): string {
@@ -128,4 +151,5 @@ export class CargausuarioForm {
       }))
       .sort((first, second) => first.name.localeCompare(second.name, 'es'));
   }
+
 }
