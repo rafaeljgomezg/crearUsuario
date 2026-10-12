@@ -1,0 +1,63 @@
+<main class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-[1.05fr_0.95fr]">
+  <section class="flex min-h-screen flex-col px-5 sm:px-10 lg:px-12 xl:px-20">
+    <header class="pt-8 sm:pt-15">
+      <p class="text-3xl font-bold tracking-[0.16em] text-blue-800 uppercase">
+        Licitaciones Venezuela
+      </p>
+    </header>
+
+    <div class="flex flex-1 items-center justify-center py-10 sm:py-14">
+      <div class="w-full max-w-md text-center">
+        <div
+          class="mx-auto mb-7 flex size-16 items-center justify-center rounded-full bg-blue-100 text-blue-800"
+          aria-hidden="true"
+        >
+          <svg
+            class="size-8"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m5 12 4 4L19 6" />
+          </svg>
+        </div>
+
+        <div role="status" aria-live="polite">
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            ¡Usuario creado con éxito!
+          </h1>
+          <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+            El registro se completó correctamente. Gracias por formar parte de Licitaciones Venezuela.
+          </p>
+        </div>
+
+        <!-- Botón para crear otro usuario 
+        <a
+          class="mt-8 inline-flex w-full items-center justify-center rounded-lg bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 active:bg-blue-950"
+          routerLink="/cargausuario-form"
+        >
+          Crear otro usuario
+        </a>
+        -->
+      </div>
+    </div>
+
+    <footer class="border-t border-slate-200 py-5 text-center text-xs leading-5 text-slate-500 sm:text-left sm:text-sm">
+      &copy; {{ copyrightYear }} Licitaciones Venezuela. Todos los derechos reservados.
+    </footer>
+  </section>
+
+  <aside class="relative isolate hidden overflow-hidden bg-blue-950 lg:block lg:min-h-screen">
+    <img
+      class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
+      [src]="headerImageUrl"
+      alt=""
+      aria-hidden="true"
+    />
+    <div class="pointer-events-none absolute inset-0 z-10 bg-blue-950/55"></div>
+  </aside>
+</main>

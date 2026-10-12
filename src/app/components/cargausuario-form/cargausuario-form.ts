@@ -121,13 +121,18 @@ export class CargausuarioForm {
     const webhookUrl = 'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/38f259d1-00de-483e-b8c4-c1ca404b68fd';
 
     this.http.post(webhookUrl, payload).subscribe({
-      next: (response) => {
-        // Redirige a tu página de éxito o agradecimiento
+      next: (response: any) => {
+        if (response.status === 'error') {
+          // Muestra el mensaje devuelto por n8n (ej. usuario ya registrado)
+          alert(response.message);
+          return;
+        }
+        // Si el registro es exitoso, navega a tu página de agradecimiento
         this.router.navigate(['/gracias']);
       },
       error: (error) => {
-        console.error('Error al registrar usuario:', error);
-        alert('Hubo un error al procesar el registro. Por favor, intenta de nuevo.');
+        console.error('Error de conexión:', error);
+        alert('Hubo un error al procesar el registro. Por favor, intenta nuevamente.');
       }
     });
 
