@@ -21,6 +21,7 @@ import {
 } from 'libphonenumber-js';
 import phoneExamples from 'libphonenumber-js/examples.mobile.json';
 
+// Modelo que mantiene los datos del formulario y el país usado para validar el teléfono.
 interface Usuario {
   nombre: string;
   email: string;
@@ -28,6 +29,7 @@ interface Usuario {
   telefono: string;
 }
 
+// Datos de presentación para cada opción del selector internacional de país.
 interface PhoneCountryOption {
   code: CountryCode;
   name: string;
@@ -44,9 +46,11 @@ export class CargausuarioForm {
 
   constructor() {}
 
+  // Servicios inyectados para enviar el registro y navegar tras una respuesta exitosa.
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   
+  // Variantes de imagen de oficina seleccionadas aleatoriamente para el encabezado.
   private readonly businessImageIds = [
     '1497366754035-f200968a6e72',
     '1497366216548-37526070297c',
@@ -57,6 +61,7 @@ export class CargausuarioForm {
   readonly headerImageUrl = this.createImageUrl(1920, 520);
   readonly mobileHeaderImageUrl = this.createImageUrl(900, 600);
   readonly copyrightYear = new Date().getFullYear();
+  // La librería proporciona países, prefijos y ejemplos telefónicos localizados.
   readonly phoneCountries = this.createPhoneCountryOptions();
   readonly phonePlaceholder = computed(() => {
     const example = getExampleNumber(this.usuarioModel().paisTelefono, phoneExamples);
@@ -70,6 +75,7 @@ export class CargausuarioForm {
     telefono: '',
   });
 
+  // Reglas compartidas por la vista y la validación previa al envío.
   usuarioForm = form(this.usuarioModel, (path) => {
     required(path.nombre, { message: 'El nombre es obligatorio.' });
     minLength(path.nombre, 2, { message: 'El nombre debe tener al menos 2 caracteres.' });
@@ -96,6 +102,7 @@ export class CargausuarioForm {
     });
   });
 
+  // Valida y normaliza los datos antes de enviarlos al webhook de registro.
   onSubmit() {
    const formState = this.usuarioForm();
     if (formState.invalid()) {
@@ -142,10 +149,12 @@ export class CargausuarioForm {
     return getCountryCallingCode(country);
   }
 
+  // Construye una URL de Unsplash reutilizando la imagen elegida para ambos tamaños.
   private createImageUrl(width: number, height: number): string {
     return `https://images.unsplash.com/photo-${this.selectedImageId}?auto=format&fit=crop&w=${width}&h=${height}&q=80`;
   }
 
+  // Genera las opciones del selector con nombres en español y su prefijo telefónico.
   private createPhoneCountryOptions(): PhoneCountryOption[] {
     const countryNames = new Intl.DisplayNames(['es'], { type: 'region' });
     return getCountries()

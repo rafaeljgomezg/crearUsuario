@@ -1,3 +1,4 @@
+<!-- Formulario de alta: conecta sus campos con usuarioForm y delega el envío al componente. -->
 <main class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-[1.05fr_0.95fr]">
   <section class="flex min-h-screen flex-col px-5 sm:px-10 lg:px-12 xl:px-20">
     <header class="pt-8 sm:pt-15">
@@ -64,6 +65,7 @@
             <label class="mb-2 block text-sm font-semibold text-slate-700" for="paisTelefono">
               País y código telefónico
             </label>
+            <!-- El país seleccionado determina el prefijo y las reglas de validación del teléfono. -->
             <select
               class="mb-3 w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 shadow-sm outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/15"
               id="paisTelefono"
@@ -95,6 +97,7 @@
             <p class="mt-2 text-xs leading-5 text-slate-500" id="telefono-ayuda">
               Selecciona el país e ingresa el número nacional, incluyendo el prefijo local si aplica.
             </p>
+            <!-- Los errores se muestran después de que la persona haya interactuado con el campo. -->
             @if (usuarioForm.telefono().touched() && usuarioForm.telefono().invalid()) {
               <ul class="mt-2 space-y-1 text-sm text-red-700" aria-live="polite">
                 @for (error of usuarioForm.telefono().errors(); track error.kind) {
