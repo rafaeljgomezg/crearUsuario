@@ -95,7 +95,7 @@ export class Preferencias implements OnInit {
       sectores: sectoresSeleccionados
     };
 
-    this.http.post(`${this.baseUrl}/preferencias/salvar`, payload).subscribe({
+    this.http.post(`${this.baseUrl}/preferencias-salvar`, payload).subscribe({
       next: (res: any) => {
         this.guardando = false;
         this.exitoGuardado = true;
