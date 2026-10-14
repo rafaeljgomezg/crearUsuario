@@ -1,0 +1,70 @@
+<main class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+  <div class="max-w-lg w-full bg-white border border-slate-200 rounded-2xl shadow-xl p-8">
+
+    <!-- Estado de Carga -->
+    <div *ngIf="cargando" class="text-center py-8">
+      <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-800">
+        <div class="size-6 animate-spin rounded-full border-2 border-blue-800 border-t-transparent"></div>
+      </div>
+      <p class="text-sm font-medium text-slate-600">Cargando tus preferencias...</p>
+    </div>
+
+    <!-- Estado de Error -->
+    <div *ngIf="error && !cargando" class="text-center py-6">
+      <h2 class="text-xl font-bold text-slate-900">Enlace Inválido</h2>
+      <p class="mt-2 text-sm text-slate-600">{{ mensajeError }}</p>
+    </div>
+
+    <!-- Formulario Principal -->
+    <div *ngIf="!cargando && !error">
+      <div class="border-b border-slate-100 pb-5 mb-6 text-center">
+        <h1 class="text-2xl font-bold text-slate-900">Sectores de Interés</h1>
+        <p class="text-sm text-slate-500 mt-1">
+          Hola <span class="font-semibold text-slate-800">{{ usuarioNombre }}</span>, configura tus rubros de interés.
+        </p>
+      </div>
+
+      <!-- Aviso para Plan Estándar -->
+      <div *ngIf="esStandard" class="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-sm">
+        <strong>Plan Estándar:</strong> Puedes seleccionar un máximo de 2 sectores.
+      </div>
+
+      <!-- Alerta de Guardado Exitoso -->
+      <div *ngIf="exitoGuardado" class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-800">
+        <span class="text-sm font-medium">¡Preferencias actualizadas con éxito!</span>
+      </div>
+
+      <!-- Lista de Sectores -->
+      <form (ngSubmit)="guardarPreferencias()" class="space-y-3">
+        <div class="max-h-64 overflow-y-auto pr-1 space-y-2">
+          <div *ngFor="let sector of sectoresDisponibles" 
+               class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-slate-50 transition-colors cursor-pointer"
+               (click)="sectoresSeleccionadosMap[sector] = !sectoresSeleccionadosMap[sector]; onSectorChange(sector)">
+            
+            <label class="text-sm font-medium text-slate-700 cursor-pointer select-none">
+              {{ sector }}
+            </label>
+
+            <input type="checkbox"
+                   [(ngModel)]="sectoresSeleccionadosMap[sector]"
+                   [name]="sector"
+                   (change)="onSectorChange(sector)"
+                   (click)="$event.stopPropagation()"
+                   class="size-4 rounded border-slate-300 text-blue-800 focus:ring-blue-800 cursor-pointer" />
+          </div>
+        </div>
+
+        <!-- Botón de Guardar -->
+        <div class="pt-4">
+          <button type="submit"
+                  [disabled]="guardando"
+                  class="w-full py-3 px-4 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 text-white font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+            <span *ngIf="guardando" class="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            <span>{{ guardando ? 'Guardando...' : 'Guardar Preferencias' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</main>
