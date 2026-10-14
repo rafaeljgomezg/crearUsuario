@@ -69,7 +69,7 @@ export class Preferencias implements OnInit {
           this.sectoresSeleccionados = new Set(data.usuario.sectoresGuardados ?? []);
           this.cargando = false;
         },
-        error: () => {
+        error: (err) => {
           console.error('6. Error en la petición HTTP GET:', err);
           this.cargando = false;
           this.error = true;
