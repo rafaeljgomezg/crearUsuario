@@ -38,20 +38,25 @@ export class Preferencias implements OnInit {
 
   ngOnInit(): void {
     // El token identifica la sesión y habilita la consulta de preferencias.
+    console.log('1. OnInit ejecutándose');
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
+    console.log('2. Token obtenido:', this.token);
 
     if (!this.token) {
+      console.log('3. Token vacío, bloqueando acceso');
       this.cargando = false;
       this.error = true;
       this.mensajeError = 'Acceso no válido. No se proporcionó un token de identificación.';
       return;
     }
 
+    console.log('4. Llamando a cargarPreferencias');
     this.cargarPreferencias();
   }
 
   /** Recupera el perfil, el límite del plan y los sectores disponibles. */
   cargarPreferencias(): void {
+    console.log('5. Iniciando petición HTTP GET a:', `${this.baseUrl}/preferencias`);
     this.http
       .get<PreferenciasResponse>(`${this.baseUrl}/preferencias`, {
         params: { token: this.token },
@@ -65,6 +70,7 @@ export class Preferencias implements OnInit {
           this.cargando = false;
         },
         error: () => {
+          console.error('6. Error en la petición HTTP GET:', err);
           this.cargando = false;
           this.error = true;
           this.mensajeError = 'No se pudo verificar el usuario o el enlace ha expirado.';
