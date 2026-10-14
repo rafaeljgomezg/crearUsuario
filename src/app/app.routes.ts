@@ -15,6 +15,15 @@ export const routes: Routes = [
         path: 'verificar',
         loadComponent: () => import('./components/verificar/verificar').then(m => m.Verificar),
     },
+
     {
+        path: 'preferencias',
+        loadComponent: () => import('./components/preferencias/preferencias').then(m => m.Preferencias),
+    },
+    
+    {
+        path: '**',
+        redirectTo: 'cargausuario-form',
+        pathMatch: 'full'
     }
 ];
