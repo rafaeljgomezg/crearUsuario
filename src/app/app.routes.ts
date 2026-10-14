@@ -10,4 +10,11 @@ export const routes: Routes = [
         path: 'gracias',
         loadComponent: () => import('./components/gracias/gracias').then(m => m.Gracias),
     },
+
+    {
+        path: 'verificar',
+        loadComponent: () => import('./components/verificar/verificar').then(m => m.Verificar),
+    },
+    {
+    }
 ];
