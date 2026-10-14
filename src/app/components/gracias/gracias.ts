@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 // Pantalla independiente mostrada después de que el registro termina correctamente.
 @Component({
   selector: 'app-gracias',
+  styleUrl: 'gracias.scss',
   templateUrl: './gracias.html',
 })
 export class Gracias {
