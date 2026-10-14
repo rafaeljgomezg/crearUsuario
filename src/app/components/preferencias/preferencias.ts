@@ -21,7 +21,9 @@ interface PreferenciasResponse {
 export class Preferencias implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://somewhat-jones-marion-guru.trycloudflare.com/webhook';
+  //private readonly baseUrl = 'https://somewhat-jones-marion-guru.trycloudflare.com/webhook';
+
+  private readonly baseUrl = '/api';
 
   token = '';
   cargando = true;
