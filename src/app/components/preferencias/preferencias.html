@@ -1,70 +1,99 @@
-<main class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-  <div class="max-w-lg w-full bg-white border border-slate-200 rounded-2xl shadow-xl p-8">
-
-    <!-- Estado de Carga -->
-    <div *ngIf="cargando" class="text-center py-8">
-      <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-800">
-        <div class="size-6 animate-spin rounded-full border-2 border-blue-800 border-t-transparent"></div>
+<main class="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+  <section class="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
+    @if (cargando) {
+      <!-- Mantiene a la persona informada mientras se cargan sus opciones. -->
+      <div class="py-8 text-center" role="status" aria-live="polite">
+        <div class="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-blue-100 text-blue-800">
+          <div class="size-6 animate-spin rounded-full border-2 border-blue-800 border-t-transparent" aria-hidden="true"></div>
+        </div>
+        <p class="text-sm font-medium text-slate-600">Cargando tus preferencias...</p>
       </div>
-      <p class="text-sm font-medium text-slate-600">Cargando tus preferencias...</p>
-    </div>
-
-    <!-- Estado de Error -->
-    <div *ngIf="error && !cargando" class="text-center py-6">
-      <h2 class="text-xl font-bold text-slate-900">Enlace Inválido</h2>
-      <p class="mt-2 text-sm text-slate-600">{{ mensajeError }}</p>
-    </div>
-
-    <!-- Formulario Principal -->
-    <div *ngIf="!cargando && !error">
-      <div class="border-b border-slate-100 pb-5 mb-6 text-center">
-        <h1 class="text-2xl font-bold text-slate-900">Sectores de Interés</h1>
-        <p class="text-sm text-slate-500 mt-1">
+    } @else if (error) {
+      <!-- Informa por qué no se puede abrir el formulario de preferencias. -->
+      <div class="py-6 text-center" role="alert">
+        <h1 class="text-xl font-bold text-slate-900">Enlace inválido</h1>
+        <p class="mt-2 text-sm text-slate-600">{{ mensajeError }}</p>
+      </div>
+    } @else {
+      <!-- Presenta el perfil y el formulario para actualizar sectores de interés. -->
+      <header class="mb-6 border-b border-slate-100 pb-5 text-center">
+        <h1 class="text-2xl font-bold text-slate-900">Sectores de interés</h1>
+        <p class="mt-1 text-sm text-slate-500">
           Hola <span class="font-semibold text-slate-800">{{ usuarioNombre }}</span>, configura tus rubros de interés.
         </p>
-      </div>
+      </header>
 
-      <!-- Aviso para Plan Estándar -->
-      <div *ngIf="esStandard" class="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-sm">
-        <strong>Plan Estándar:</strong> Puedes seleccionar un máximo de 2 sectores.
-      </div>
-
-      <!-- Alerta de Guardado Exitoso -->
-      <div *ngIf="exitoGuardado" class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-800">
-        <span class="text-sm font-medium">¡Preferencias actualizadas con éxito!</span>
-      </div>
-
-      <!-- Lista de Sectores -->
-      <form (ngSubmit)="guardarPreferencias()" class="space-y-3">
-        <div class="max-h-64 overflow-y-auto pr-1 space-y-2">
-          <div *ngFor="let sector of sectoresDisponibles" 
-               class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-slate-50 transition-colors cursor-pointer"
-               (click)="sectoresSeleccionadosMap[sector] = !sectoresSeleccionadosMap[sector]; onSectorChange(sector)">
-            
-            <label class="text-sm font-medium text-slate-700 cursor-pointer select-none">
-              {{ sector }}
-            </label>
-
-            <input type="checkbox"
-                   [(ngModel)]="sectoresSeleccionadosMap[sector]"
-                   [name]="sector"
-                   (change)="onSectorChange(sector)"
-                   (click)="$event.stopPropagation()"
-                   class="size-4 rounded border-slate-300 text-blue-800 focus:ring-blue-800 cursor-pointer" />
-          </div>
+      @if (esStandard) {
+        <!-- Explica el límite aplicado al plan estándar antes de elegir sectores. -->
+        <div
+          id="aviso-limite-sectores"
+          class="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-800"
+          role="note"
+        >
+          <strong>Plan Estándar:</strong> puedes seleccionar un máximo de 2 sectores.
         </div>
+      }
 
-        <!-- Botón de Guardar -->
+      <!-- Comunica en línea el resultado del último intento de guardado. -->
+      @if (exitoGuardado) {
+        <div class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-800" role="status" aria-live="polite">
+          <span class="text-sm font-medium">¡Preferencias actualizadas con éxito!</span>
+        </div>
+      }
+      @if (mensajeGuardadoError) {
+        <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
+          {{ mensajeGuardadoError }}
+        </div>
+      }
+
+      <form (ngSubmit)="guardarPreferencias()" class="space-y-3" [attr.aria-busy]="guardando">
+        <fieldset class="max-h-64 space-y-2 overflow-y-auto pr-1" [disabled]="guardando">
+          <legend class="sr-only">Selecciona tus sectores de interés</legend>
+          @for (sector of sectoresDisponibles; track sector; let index = $index) {
+            <label
+              class="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 transition-colors"
+              [class.cursor-pointer]="!estaSectorDeshabilitado(sector) && !guardando"
+              [class.cursor-not-allowed]="estaSectorDeshabilitado(sector) || guardando"
+              [class.opacity-50]="estaSectorDeshabilitado(sector)"
+              [class.hover:border-blue-300]="!estaSectorDeshabilitado(sector) && !guardando"
+              [class.hover:bg-slate-50]="!estaSectorDeshabilitado(sector) && !guardando"
+              [attr.for]="'sector-' + index"
+            >
+              <span class="select-none text-sm font-medium text-slate-700">{{ sector }}</span>
+              <input
+                class="size-4 rounded border-slate-300 text-blue-800 focus:ring-blue-800"
+                type="checkbox"
+                [id]="'sector-' + index"
+                [name]="sector"
+                [ngModel]="sectoresSeleccionados.has(sector)"
+                (ngModelChange)="onSectorChange(sector, $event)"
+                [disabled]="estaSectorDeshabilitado(sector) || guardando"
+                [attr.aria-describedby]="esStandard ? 'aviso-limite-sectores' : null"
+              />
+            </label>
+          } @empty {
+            <p class="py-4 text-center text-sm text-slate-500">
+              No hay sectores disponibles para seleccionar.
+            </p>
+          }
+        </fieldset>
+
+        <!-- Evita envíos repetidos y refleja visualmente el estado de guardado. -->
         <div class="pt-4">
-          <button type="submit"
-                  [disabled]="guardando"
-                  class="w-full py-3 px-4 bg-blue-800 hover:bg-blue-900 disabled:opacity-50 text-white font-semibold rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
-            <span *ngIf="guardando" class="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-            <span>{{ guardando ? 'Guardando...' : 'Guardar Preferencias' }}</span>
+          <button
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 px-4 py-3 font-semibold text-white shadow-md transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
+            type="submit"
+            [disabled]="guardando"
+          >
+            @if (guardando) {
+              <span class="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true"></span>
+              <span>Guardando...</span>
+            } @else {
+              <span>Guardar preferencias</span>
+            }
           </button>
         </div>
       </form>
-    </div>
-
-  </div>
+    }
+  </section>
 </main>

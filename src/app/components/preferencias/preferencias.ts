@@ -1,110 +1,129 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component,  OnInit, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
+interface PreferenciasResponse {
+  usuario: {
+    nombre: string;
+    sectoresGuardados?: string[];
+  };
+  esStandard: boolean;
+  sectoresDisponibles?: string[];
+}
 
 @Component({
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   selector: 'app-preferencias',
   styleUrl: './preferencias.scss',
   templateUrl: './preferencias.html',
 })
 export class Preferencias implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private http = inject(HttpClient);
-
+  private readonly route = inject(ActivatedRoute);
+  private readonly http = inject(HttpClient);
   private readonly baseUrl = 'https://somewhat-jones-marion-guru.trycloudflare.com/webhook';
 
-  token: string = '';
+  token = '';
   cargando = true;
   guardando = false;
   error = false;
   mensajeError = '';
+  mensajeGuardadoError = '';
   exitoGuardado = false;
 
   usuarioNombre = '';
-  usuarioEmail = '';
   esStandard = false;
-  
   sectoresDisponibles: string[] = [];
-  sectoresSeleccionadosMap: { [key: string]: boolean } = {};
+  sectoresSeleccionados = new Set<string>();
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.token = params['token'];
-      if (!this.token) {
-        this.cargando = false;
-        this.error = true;
-        this.mensajeError = 'Acceso no válido. No se proporcionó un token de identificación.';
-        return;
-      }
+  ngOnInit(): void {
+    // El token identifica la sesión y habilita la consulta de preferencias.
+    this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
 
-      this.cargarPreferencias();
-    });
-  }
-
-  cargarPreferencias() {
-    const url = `${this.baseUrl}/preferencias?token=${this.token}`;
-
-    this.http.get<any>(url).subscribe({
-      next: (data) => {
-        this.usuarioNombre = data.usuario.nombre;
-        this.usuarioEmail = data.usuario.email;
-        this.esStandard = data.esStandard;
-        this.sectoresDisponibles = data.sectoresDisponibles || [];
-
-        const guardadosSet = new Set(data.usuario.sectoresGuardados || []);
-        this.sectoresDisponibles.forEach(sector => {
-          this.sectoresSeleccionadosMap[sector] = guardadosSet.has(sector);
-        });
-
-        this.cargando = false;
-      },
-      error: (err) => {
-        this.cargando = false;
-        this.error = true;
-        this.mensajeError = 'No se pudo verificar el usuario o el enlace ha expirado.';
-      }
-    });
-  }
-
-  // Valida el límite de 2 sectores si el usuario es Plan Standard
-  onSectorChange(sector: string) {
-    if (this.esStandard) {
-      const seleccionados = Object.keys(this.sectoresSeleccionadosMap)
-        .filter(s => this.sectoresSeleccionadosMap[s]);
-      
-      if (seleccionados.length > 2) {
-        this.sectoresSeleccionadosMap[sector] = false;
-        alert('Plan Estándar: Puedes seleccionar un máximo de 2 sectores.');
-      }
+    if (!this.token) {
+      this.cargando = false;
+      this.error = true;
+      this.mensajeError = 'Acceso no válido. No se proporcionó un token de identificación.';
+      return;
     }
+
+    this.cargarPreferencias();
   }
 
-  guardarPreferencias() {
-    this.guardando = true;
+  /** Recupera el perfil, el límite del plan y los sectores disponibles. */
+  cargarPreferencias(): void {
+    this.http
+      .get<PreferenciasResponse>(`${this.baseUrl}/preferencias`, {
+        params: { token: this.token },
+      })
+      .subscribe({
+        next: (data) => {
+          this.usuarioNombre = data.usuario.nombre;
+          this.esStandard = data.esStandard;
+          this.sectoresDisponibles = data.sectoresDisponibles ?? [];
+          this.sectoresSeleccionados = new Set(data.usuario.sectoresGuardados ?? []);
+          this.cargando = false;
+        },
+        error: () => {
+          this.cargando = false;
+          this.error = true;
+          this.mensajeError = 'No se pudo verificar el usuario o el enlace ha expirado.';
+        },
+      });
+  }
+
+  /** Actualiza la selección y aplica el máximo de dos sectores del plan estándar. */
+  onSectorChange(sector: string, seleccionado: boolean): void {
+    this.mensajeGuardadoError = '';
     this.exitoGuardado = false;
 
-    const sectoresSeleccionados = Object.keys(this.sectoresSeleccionadosMap)
-      .filter(sector => this.sectoresSeleccionadosMap[sector]);
+    if (seleccionado && this.esStandard && this.sectoresSeleccionados.size >= 2) {
+      return;
+    }
 
-    const payload = {
-      token: this.token,
-      sectores: sectoresSeleccionados
-    };
+    const seleccionActualizada = new Set(this.sectoresSeleccionados);
+    if (seleccionado) {
+      seleccionActualizada.add(sector);
+    } else {
+      seleccionActualizada.delete(sector);
+    }
+    this.sectoresSeleccionados = seleccionActualizada;
+  }
 
-    this.http.post(`${this.baseUrl}/preferencias-salvar`, payload).subscribe({
-      next: (res: any) => {
-        this.guardando = false;
-        this.exitoGuardado = true;
-        setTimeout(() => this.exitoGuardado = false, 4000);
-      },
-      error: (err) => {
-        this.guardando = false;
-        alert('Ocurrió un error al intentar guardar tus preferencias.');
-      }
-    });
+  /** Deshabilita opciones adicionales cuando el plan estándar llega a su límite. */
+  estaSectorDeshabilitado(sector: string): boolean {
+    return (
+      this.esStandard &&
+      this.sectoresSeleccionados.size >= 2 &&
+      !this.sectoresSeleccionados.has(sector)
+    );
+  }
+
+  /** Envía al servicio las preferencias seleccionadas para el token actual. */
+  guardarPreferencias(): void {
+    if (this.guardando) {
+      return;
+    }
+
+    this.guardando = true;
+    this.exitoGuardado = false;
+    this.mensajeGuardadoError = '';
+
+    this.http
+      .post(`${this.baseUrl}/preferencias-salvar`, {
+        token: this.token,
+        sectores: [...this.sectoresSeleccionados],
+      })
+      .subscribe({
+        next: () => {
+          this.guardando = false;
+          this.exitoGuardado = true;
+          setTimeout(() => (this.exitoGuardado = false), 4000);
+        },
+        error: () => {
+          this.guardando = false;
+          this.mensajeGuardadoError = 'Ocurrió un error al intentar guardar tus preferencias.';
+        },
+      });
   }
 }
