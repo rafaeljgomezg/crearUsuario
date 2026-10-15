@@ -2,7 +2,7 @@
 <main class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-[1.05fr_0.95fr]">
   <section class="flex min-h-screen flex-col px-5 sm:px-10 lg:px-12 xl:px-20">
     <header class="pt-8 sm:pt-15">
-      <p class="text-3xl font-bold tracking-[0.16em] text-blue-800 uppercase">
+      <p class="text-3xl font-bold tracking-[0.16em] text-blue-800 uppercase text-center">
         Licitaciones Venezuela
       </p>
     </header>
@@ -32,17 +32,34 @@
           <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             ¡Usuario creado con éxito!
           </h1>
-          <p class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
-            El registro se completó correctamente. Verifica tu correo electronico para activar tu
-            cuenta y poder comenzar conla recepcion de licitaciones. 
-            <strong>Gracias por formar parte de Licitaciones Venezuela.</strong>
-          </p>
-           <div class="footer-note">
-            Ya puedes cerrar esta pestaña de forma segura.
+          <div class="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+            El registro se completó correctamente. 
+          </div>
+           
+          <div class="bg-amber-300 text-shadow-black mt-4 text-base leading-7 text-slate-600 sm:text-lg italic">
+            Se ha enviado un correo de confirmación a tu correo electrónico. 
+          </div>
+            
+            
+          <div class="mt-4 text-base leading-7 text-slate-800 sm:text-lg">
+            Gracias por formar parte de Licitaciones Venezuela.
+          </div>
+
+          <div class="footer-note">
+            Puede cerrar esta página con seguridad.
           </div>
         </div>
 
-       
+        <!-- Botón para cerrar la página 
+        <button
+          class="boton mt-6 inline-flex w-full items-center justify-center rounded-lg bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 active:bg-blue-950"
+          type="button"
+          (click)="closePage()"
+        >
+          Cerrar esta página
+        </button>
+
+        -->
 
         <!-- Botón para crear otro usuario 
         <a
