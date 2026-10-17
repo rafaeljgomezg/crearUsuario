@@ -56,8 +56,29 @@ describe('Checkout', () => {
       metodo: 'Zinli',
     });
 
-    request.flush({});
+    request.flush('');
     expect(component.enviado).toBe(true);
+    expect(component.enviando).toBe(false);
+  });
+
+  it('shows an error returned as JSON by the webhook', () => {
+    const form = {
+      invalid: false,
+      control: { markAllAsTouched: vi.fn() },
+    } as never;
+    component.plan = 'STANDARD';
+    component.periodo = 'mensual';
+    component.metodo = 'Binance Pay';
+
+    component.onSubmit(form);
+
+    const request = httpTestingController.expectOne(
+      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+    );
+    request.flush(JSON.stringify({ status: 'error', message: 'Pago rechazado.' }));
+
+    expect(component.enviado).toBe(false);
+    expect(component.mensajeError).toBe('Pago rechazado.');
     expect(component.enviando).toBe(false);
   });
 

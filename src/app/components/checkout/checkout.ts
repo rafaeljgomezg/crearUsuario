@@ -14,11 +14,6 @@ interface CheckoutPayload {
   metodo: Metodo;
 }
 
-interface CheckoutResponse {
-  status?: string;
-  message?: string;
-}
-
 @Component({
   imports: [FormsModule],
   selector: 'app-checkout',
@@ -68,11 +63,12 @@ export class Checkout implements OnInit {
     this.enviado = false;
     this.mensajeError = '';
 
-    this.http.post<CheckoutResponse>(this.webhookUrl, payload).subscribe({
+    this.http.post(this.webhookUrl, payload, { responseType: 'text' }).subscribe({
       next: (response) => {
         this.enviando = false;
-        if (response?.status === 'error') {
-          this.mensajeError = response.message || 'No se pudo procesar la selección.';
+        const errorMensaje = this.getResponseErrorMessage(response);
+        if (errorMensaje) {
+          this.mensajeError = errorMensaje;
           return;
         }
         this.enviado = true;
@@ -83,5 +79,29 @@ export class Checkout implements OnInit {
         this.mensajeError = 'Ocurrió un error al procesar tu selección. Inténtalo nuevamente.';
       },
     });
+  }
+
+  private getResponseErrorMessage(response: string): string | null {
+    if (!response.trim()) {
+      return null;
+    }
+
+    try {
+      const parsed: unknown = JSON.parse(response);
+      if (
+        typeof parsed === 'object' &&
+        parsed !== null &&
+        'status' in parsed &&
+        parsed.status === 'error'
+      ) {
+        return 'message' in parsed && typeof parsed.message === 'string'
+          ? parsed.message
+          : 'No se pudo procesar la selección.';
+      }
+    } catch {
+      // El webhook puede responder con texto plano; solo se interpretan como error los JSON de error.
+    }
+
+    return null;
   }
 }
