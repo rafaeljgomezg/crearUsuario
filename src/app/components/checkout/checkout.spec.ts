@@ -60,6 +60,10 @@ describe('Checkout', () => {
     request.flush('');
     expect(component.isSubmitted).toBe(true);
     expect(component.isLoading).toBe(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Puedes cerrar esta página con seguridad',
+    );
   });
 
   it('shows an error returned as JSON by the webhook', () => {
@@ -102,6 +106,10 @@ describe('Checkout', () => {
     expect(component.isSubmitted).toBe(false);
     expect(component.isSubmissionUnconfirmed).toBe(true);
     expect(component.isLoading).toBe(false);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain(
+      'Puedes cerrar esta página; no es necesario mantenerla abierta.',
+    );
   });
 
   it('does not submit if a checkout option is missing', () => {
