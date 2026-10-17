@@ -48,6 +48,7 @@ describe('Checkout', () => {
     const request = httpTestingController.expectOne(
       'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
     );
+    expect(component.isLoading).toBe(true);
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({
       UserID: 'user-123',
