@@ -1,0 +1,189 @@
+<main class="grid min-h-screen grid-cols-1 bg-white lg:grid-cols-[1.05fr_0.95fr]">
+  <section class="flex min-h-screen flex-col px-5 sm:px-10 lg:px-12 xl:px-20">
+    <header class="pt-8 sm:pt-15">
+      <p class="text-center text-3xl font-bold tracking-[0.16em] text-blue-800 uppercase">
+        Licitaciones Venezuela
+      </p>
+    </header>
+
+    <div class="flex flex-1 items-center justify-center py-10 sm:py-12">
+      <div class="w-full max-w-xl">
+        @if (!userId) {
+          <div class="rounded-xl border border-red-200 bg-red-50 p-5 text-center" role="alert">
+            <h1 class="text-xl font-bold text-slate-900">No se pudo iniciar el checkout</h1>
+            <p class="mt-2 text-sm leading-6 text-red-800">
+              Falta el identificador del usuario. Abre el enlace con el parámetro
+              <span class="font-semibold">userId</span>.
+            </p>
+          </div>
+        } @else {
+          <header class="mb-7">
+            <p class="text-sm font-semibold tracking-wide text-blue-800 uppercase">Checkout</p>
+            <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Elige tu plan
+            </h1>
+            <p class="mt-3 text-base leading-7 text-slate-600">
+              Selecciona el plan, el periodo de pago y tu método de pago.
+            </p>
+          </header>
+
+          @if (enviado) {
+            <div
+              class="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+              role="status"
+              aria-live="polite"
+            >
+              Tu selección se envió correctamente. ¡Gracias!
+            </div>
+          }
+
+          @if (mensajeError) {
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
+              {{ mensajeError }}
+            </div>
+          }
+
+          <form
+            #checkoutForm="ngForm"
+            (ngSubmit)="onSubmit(checkoutForm)"
+            class="space-y-6"
+            [attr.aria-busy]="enviando"
+          >
+            <div>
+              <label for="userId" class="mb-2 block text-sm font-semibold text-slate-800">
+                Usuario
+              </label>
+              <input
+                id="userId"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+                type="text"
+                [value]="userId"
+                readonly
+              />
+            </div>
+
+            <fieldset [disabled]="enviando" class="space-y-3">
+              <legend class="mb-3 text-sm font-semibold text-slate-800">Plan</legend>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label
+                  class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-[:checked]:border-blue-800 has-[:checked]:bg-blue-50"
+                >
+                  <input
+                    class="mt-1 size-4 accent-blue-800"
+                    type="radio"
+                    name="plan"
+                    value="STANDARD"
+                    [(ngModel)]="plan"
+                    required
+                  />
+                  <span>
+                    <span class="block font-semibold text-slate-900">STANDARD</span>
+                    <span class="mt-1 block text-sm text-slate-500">Para comenzar</span>
+                  </span>
+                </label>
+                <label
+                  class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-[:checked]:border-blue-800 has-[:checked]:bg-blue-50"
+                >
+                  <input
+                    class="mt-1 size-4 accent-blue-800"
+                    type="radio"
+                    name="plan"
+                    value="CORPORATE"
+                    [(ngModel)]="plan"
+                    required
+                  />
+                  <span>
+                    <span class="block font-semibold text-slate-900">CORPORATE</span>
+                    <span class="mt-1 block text-sm text-slate-500">Para equipos y empresas</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div>
+              <label for="periodo" class="mb-2 block text-sm font-semibold text-slate-800">
+                Periodo de pago
+              </label>
+              <select
+                id="periodo"
+                class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 focus:border-blue-800 focus:ring-2 focus:ring-blue-800/20"
+                name="periodo"
+                [(ngModel)]="periodo"
+                required
+                [disabled]="enviando"
+              >
+                <option value="" disabled>Selecciona un periodo</option>
+                <option value="mensual">Mensual</option>
+                <option value="trimestral">Trimestral</option>
+                <option value="semestral">Semestral</option>
+                <option value="anual">Anual</option>
+              </select>
+            </div>
+
+            <fieldset [disabled]="enviando" class="space-y-3">
+              <legend class="mb-3 text-sm font-semibold text-slate-800">Método de pago</legend>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <label
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-[:checked]:border-blue-800 has-[:checked]:bg-blue-50"
+                >
+                  <input
+                    class="size-4 accent-blue-800"
+                    type="radio"
+                    name="metodo"
+                    value="Binance Pay"
+                    [(ngModel)]="metodo"
+                    required
+                  />
+                  <span class="font-medium text-slate-800">Binance Pay</span>
+                </label>
+                <label
+                  class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-[:checked]:border-blue-800 has-[:checked]:bg-blue-50"
+                >
+                  <input
+                    class="size-4 accent-blue-800"
+                    type="radio"
+                    name="metodo"
+                    value="Zinli"
+                    [(ngModel)]="metodo"
+                    required
+                  />
+                  <span class="font-medium text-slate-800">Zinli</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <button
+              class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+              type="submit"
+              [disabled]="enviando || checkoutForm.invalid"
+            >
+              @if (enviando) {
+                <span
+                  class="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+                  aria-hidden="true"
+                ></span>
+                <span>Enviando...</span>
+              } @else {
+                <span>Continuar al pago</span>
+              }
+            </button>
+          </form>
+        }
+      </div>
+    </div>
+
+    <footer class="border-t border-slate-200 py-5 text-center text-xs leading-5 text-slate-500 sm:text-sm">
+      <p>&copy; {{ copyrightYear }} Licitaciones Venezuela. Todos los derechos reservados.</p>
+    </footer>
+  </section>
+
+  <aside class="relative isolate hidden overflow-hidden bg-blue-950 lg:block lg:min-h-screen">
+    <img
+      class="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center"
+      [src]="headerImageUrl"
+      alt=""
+      aria-hidden="true"
+    />
+    <div class="pointer-events-none absolute inset-0 z-10 bg-blue-950/55"></div>
+  </aside>
+</main>

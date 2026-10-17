@@ -20,7 +20,12 @@ export const routes: Routes = [
         path: 'preferencias',
         loadComponent: () => import('./components/preferencias/preferencias').then(m => m.Preferencias),
     },
-    
+
+    {
+        path: 'checkout',
+        loadComponent: () => import('./components/checkout/checkout').then(m => m.Checkout),
+    },
+
     {
         path: '**',
         redirectTo: 'cargausuario-form',
