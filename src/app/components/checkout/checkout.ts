@@ -15,6 +15,21 @@ interface CheckoutPayload {
   metodo: Metodo;
 }
 
+const PLAN_PRICES: Record<Plan, Record<Periodo, number>> = {
+  STANDARD: {
+    mensual: 49,
+    trimestral: 130,
+    semestral: 240,
+    anual: 450,
+  },
+  CORPORATE: {
+    mensual: 99,
+    trimestral: 270,
+    semestral: 500,
+    anual: 950,
+  },
+};
+
 @Component({
   imports: [FormsModule],
   selector: 'app-checkout',
@@ -31,6 +46,7 @@ export class Checkout implements OnInit {
   readonly copyrightYear = new Date().getFullYear();
   readonly headerImageUrl =
     'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1920&h=520&q=80';
+  readonly paymentEmail = 'rafaeljgomezg@gmail.com';
 
   userId = '';
   selectedPlan: Plan | '' = '';
@@ -40,6 +56,14 @@ export class Checkout implements OnInit {
   isSubmitted = false;
   isSubmissionUnconfirmed = false;
   errorMessage = '';
+
+  get selectedPrice(): number | null {
+    if (!this.selectedPlan || !this.selectedPeriodo) {
+      return null;
+    }
+
+    return PLAN_PRICES[this.selectedPlan][this.selectedPeriodo];
+  }
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.queryParamMap.get('userId')?.trim() ?? '';

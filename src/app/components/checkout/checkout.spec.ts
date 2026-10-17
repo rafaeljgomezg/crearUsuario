@@ -34,6 +34,28 @@ describe('Checkout', () => {
     expect(component).toBeTruthy();
   });
 
+  it.each([
+    ['STANDARD', 'mensual', 49],
+    ['STANDARD', 'trimestral', 130],
+    ['STANDARD', 'semestral', 240],
+    ['STANDARD', 'anual', 450],
+    ['CORPORATE', 'mensual', 99],
+    ['CORPORATE', 'trimestral', 270],
+    ['CORPORATE', 'semestral', 500],
+    ['CORPORATE', 'anual', 950],
+  ] as const)('calculates the %s price for %s', (plan, periodo, price) => {
+    component.selectedPlan = plan;
+    component.selectedPeriodo = periodo;
+
+    expect(component.selectedPrice).toBe(price);
+  });
+
+  it('shows the payment recipient email on the checkout form', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('rafaeljgomezg@gmail.com');
+  });
+
   it('sends the selected checkout data and user ID as JSON', () => {
     const form = {
       invalid: false,
