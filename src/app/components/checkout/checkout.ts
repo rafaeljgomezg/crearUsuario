@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { timeout } from 'rxjs';
 
 type Plan = 'STANDARD' | 'CORPORATE';
 type Periodo = 'mensual' | 'trimestral' | 'semestral' | 'anual';
@@ -23,6 +24,7 @@ interface CheckoutPayload {
 export class Checkout implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly webhookUrl =
     'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso';
 
@@ -36,6 +38,7 @@ export class Checkout implements OnInit {
   selectedMetodo: Metodo | '' = '';
   isLoading = false;
   isSubmitted = false;
+  isSubmissionUnconfirmed = false;
   errorMessage = '';
 
   ngOnInit(): void {
@@ -67,25 +70,30 @@ export class Checkout implements OnInit {
 
     this.isLoading = true;
     this.isSubmitted = false;
+    this.isSubmissionUnconfirmed = false;
     this.errorMessage = '';
 
-    this.http.post(this.webhookUrl, payload, { responseType: 'text' }).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        const errorMessage = this.getResponseErrorMessage(response);
-        if (errorMessage) {
-          this.errorMessage = errorMessage;
-          return;
-        }
-        this.isSubmitted = true;
-      },
-      error: (error: unknown) => {
-        console.error('Error al enviar la selección del checkout:', error);
-        this.isLoading = false;
-        this.errorMessage =
-          'Ocurrió un error al procesar tu selección. Inténtalo nuevamente.';
-      },
-    });
+    this.http
+      .post(this.webhookUrl, payload, { responseType: 'text' })
+      .pipe(timeout({ first: 30_000 }))
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          const errorMessage = this.getResponseErrorMessage(response);
+          if (errorMessage) {
+            this.errorMessage = errorMessage;
+          } else {
+            this.isSubmitted = true;
+          }
+          this.changeDetector.markForCheck();
+        },
+        error: (error: unknown) => {
+          console.error('Error al enviar la selección del checkout:', error);
+          this.isLoading = false;
+          this.isSubmissionUnconfirmed = true;
+          this.changeDetector.markForCheck();
+        },
+      });
   }
 
   private getResponseErrorMessage(response: string): string | null {

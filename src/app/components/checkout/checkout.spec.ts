@@ -83,6 +83,27 @@ describe('Checkout', () => {
     expect(component.isLoading).toBe(false);
   });
 
+  it('shows an unconfirmed status if the webhook request fails', () => {
+    const form = {
+      invalid: false,
+      control: { markAllAsTouched: vi.fn() },
+    } as never;
+    component.selectedPlan = 'STANDARD';
+    component.selectedPeriodo = 'mensual';
+    component.selectedMetodo = 'Binance Pay';
+
+    component.onSubmit(form);
+
+    const request = httpTestingController.expectOne(
+      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+    );
+    request.error(new ProgressEvent('error'));
+
+    expect(component.isSubmitted).toBe(false);
+    expect(component.isSubmissionUnconfirmed).toBe(true);
+    expect(component.isLoading).toBe(false);
+  });
+
   it('does not submit if a checkout option is missing', () => {
     const markAllAsTouched = vi.fn();
     const form = {
