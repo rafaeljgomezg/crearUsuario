@@ -30,8 +30,8 @@
             </div>
             <h1 class="text-2xl font-bold text-slate-900">Procesando tu solicitud</h1>
             <p class="mt-3 text-sm leading-6 text-slate-600">
-              Estamos enviando tus datos para iniciar el procesamiento del pago. Cuando el pago se
-              complete, te enviaremos un correo electrónico con el resultado.
+              Estamos enviando tus datos. La transacción puede tardar unos momentos en procesarse;
+              espera la confirmación antes de volver a intentarlo.
             </p>
           </section>
         } @else if (isSubmitted) {
@@ -57,14 +57,16 @@
                 <path d="m5 12 4 4L19 6" />
               </svg>
             </div>
-            <h1 class="text-2xl font-bold text-slate-900">¡Datos enviados!</h1>
+            <h1 class="text-2xl font-bold text-slate-900">¡Solicitud enviada!</h1>
             <p class="mt-3 text-sm leading-6 text-slate-600">
-              Estamos procesando el pago de tu plan
+              La transacción de tu plan
               <span class="font-semibold text-slate-800">{{ selectedPlan }}</span>,
               periodo <span class="font-semibold text-slate-800">{{ selectedPeriodo }}</span>
               y método de pago
-              <span class="font-semibold text-slate-800">{{ selectedMetodo }}</span>. Cuando el pago
-              se complete, te enviaremos un correo electrónico con el resultado.
+              <span class="font-semibold text-slate-800">{{ selectedMetodo }}</span> está en
+              proceso. Te enviaremos un correo electrónico con el resultado final, ya sea aprobada
+              o rechazada. Si necesitas realizar otro intento, deberás iniciar nuevamente el
+              proceso desde el checkout.
             </p>
           </section>
         } @else {
