@@ -31,52 +31,59 @@ export class Checkout implements OnInit {
     'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1920&h=520&q=80';
 
   userId = '';
-  plan: Plan | '' = '';
-  periodo: Periodo | '' = '';
-  metodo: Metodo | '' = '';
-  enviando = false;
-  enviado = false;
-  mensajeError = '';
+  selectedPlan: Plan | '' = '';
+  selectedPeriodo: Periodo | '' = '';
+  selectedMetodo: Metodo | '' = '';
+  isLoading = false;
+  isSubmitted = false;
+  errorMessage = '';
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.queryParamMap.get('userId')?.trim() ?? '';
   }
 
   onSubmit(form: NgForm): void {
-    if (this.enviando) {
+    if (this.isLoading) {
       return;
     }
 
-    if (!this.userId || form.invalid || !this.plan || !this.periodo || !this.metodo) {
+    if (
+      !this.userId ||
+      form.invalid ||
+      !this.selectedPlan ||
+      !this.selectedPeriodo ||
+      !this.selectedMetodo
+    ) {
       form.control.markAllAsTouched();
       return;
     }
 
     const payload: CheckoutPayload = {
       UserID: this.userId,
-      plan: this.plan,
-      periodo: this.periodo,
-      metodo: this.metodo,
+      plan: this.selectedPlan,
+      periodo: this.selectedPeriodo,
+      metodo: this.selectedMetodo,
     };
 
-    this.enviando = true;
-    this.enviado = false;
-    this.mensajeError = '';
+    this.isLoading = true;
+    this.isSubmitted = false;
+    this.errorMessage = '';
 
     this.http.post(this.webhookUrl, payload, { responseType: 'text' }).subscribe({
       next: (response) => {
-        this.enviando = false;
-        const errorMensaje = this.getResponseErrorMessage(response);
-        if (errorMensaje) {
-          this.mensajeError = errorMensaje;
+        this.isLoading = false;
+        const errorMessage = this.getResponseErrorMessage(response);
+        if (errorMessage) {
+          this.errorMessage = errorMessage;
           return;
         }
-        this.enviado = true;
+        this.isSubmitted = true;
       },
       error: (error: unknown) => {
         console.error('Error al enviar la selección del checkout:', error);
-        this.enviando = false;
-        this.mensajeError = 'Ocurrió un error al procesar tu selección. Inténtalo nuevamente.';
+        this.isLoading = false;
+        this.errorMessage =
+          'Ocurrió un error al procesar tu selección. Inténtalo nuevamente.';
       },
     });
   }

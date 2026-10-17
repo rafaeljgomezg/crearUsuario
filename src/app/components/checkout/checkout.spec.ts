@@ -39,9 +39,9 @@ describe('Checkout', () => {
       invalid: false,
       control: { markAllAsTouched: vi.fn() },
     } as never;
-    component.plan = 'CORPORATE';
-    component.periodo = 'trimestral';
-    component.metodo = 'Zinli';
+    component.selectedPlan = 'CORPORATE';
+    component.selectedPeriodo = 'trimestral';
+    component.selectedMetodo = 'Zinli';
 
     component.onSubmit(form);
 
@@ -57,8 +57,8 @@ describe('Checkout', () => {
     });
 
     request.flush('');
-    expect(component.enviado).toBe(true);
-    expect(component.enviando).toBe(false);
+    expect(component.isSubmitted).toBe(true);
+    expect(component.isLoading).toBe(false);
   });
 
   it('shows an error returned as JSON by the webhook', () => {
@@ -66,9 +66,9 @@ describe('Checkout', () => {
       invalid: false,
       control: { markAllAsTouched: vi.fn() },
     } as never;
-    component.plan = 'STANDARD';
-    component.periodo = 'mensual';
-    component.metodo = 'Binance Pay';
+    component.selectedPlan = 'STANDARD';
+    component.selectedPeriodo = 'mensual';
+    component.selectedMetodo = 'Binance Pay';
 
     component.onSubmit(form);
 
@@ -77,9 +77,9 @@ describe('Checkout', () => {
     );
     request.flush(JSON.stringify({ status: 'error', message: 'Pago rechazado.' }));
 
-    expect(component.enviado).toBe(false);
-    expect(component.mensajeError).toBe('Pago rechazado.');
-    expect(component.enviando).toBe(false);
+    expect(component.isSubmitted).toBe(false);
+    expect(component.errorMessage).toBe('Pago rechazado.');
+    expect(component.isLoading).toBe(false);
   });
 
   it('does not submit if a checkout option is missing', () => {
