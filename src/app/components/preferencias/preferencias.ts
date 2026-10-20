@@ -21,7 +21,7 @@ interface PreferenciasResponse {
 export class Preferencias implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://198-46-233-201.sslip.io/webhook';
+  private readonly baseUrl = 'https://198-46-233-201.sslip.io//webhook';
 
   //private readonly baseUrl = '/api';
 
