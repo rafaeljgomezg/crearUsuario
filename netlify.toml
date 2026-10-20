@@ -1,5 +1,5 @@
 [[redirects]]
   from = "/api/*"
-  to = "https://somewhat-jones-marion-guru.trycloudflare.com/webhook/:splat"
+  to = "https://198-46-233-201.sslip.io/webhook/:splat"
   status = 200
   force = true

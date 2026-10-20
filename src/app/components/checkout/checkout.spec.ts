@@ -68,7 +68,7 @@ describe('Checkout', () => {
     component.onSubmit(form);
 
     const request = httpTestingController.expectOne(
-      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+      'https://198-46-233-201.sslip.io/webhook/pago-exitoso',
     );
     expect(component.isLoading).toBe(true);
     expect(request.request.method).toBe('POST');
@@ -100,7 +100,7 @@ describe('Checkout', () => {
     component.onSubmit(form);
 
     const request = httpTestingController.expectOne(
-      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+      'https://198-46-233-201.sslip.io/webhook/pago-exitoso',
     );
     request.flush(JSON.stringify({ status: 'error', message: 'Pago rechazado.' }));
 
@@ -121,7 +121,7 @@ describe('Checkout', () => {
     component.onSubmit(form);
 
     const request = httpTestingController.expectOne(
-      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+      'https://198-46-233-201.sslip.io/webhook/pago-exitoso',
     );
     request.error(new ProgressEvent('error'));
 
@@ -145,7 +145,7 @@ describe('Checkout', () => {
 
     expect(markAllAsTouched).toHaveBeenCalled();
     httpTestingController.expectNone(
-      'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso',
+      'https://198-46-233-201.sslip.io/webhook/pago-exitoso',
     );
   });
 });
