@@ -12,6 +12,11 @@ export const routes: Routes = [
     },
 
     {
+        path: 'registrado',
+        loadComponent: () => import('./components/registrado/registrado').then(m => m.Registrado),
+    },
+
+    {
         path: 'verificar',
         loadComponent: () => import('./components/verificar/verificar').then(m => m.Verificar),
     },
@@ -28,7 +33,6 @@ export const routes: Routes = [
 
     {
         path: '**',
-        redirectTo: 'cargausuario-form',
-        pathMatch: 'full'
+        loadComponent: () => import('./components/no-existe/no-existe').then(m => m.NoExiste),
     }
 ];
