@@ -33,7 +33,7 @@ ngOnInit() {
 
 
 verificarTokenEnN8n(token: string) {
-    const webhookUrl = `https://somewhat-jones-marion-guru.trycloudflare.com/webhook/verificar?token=${token}`;
+    const webhookUrl = `https://198-46-233-201.sslip.io/webhook/verificar?token=${token}`;
 
     this.http.get(webhookUrl).subscribe({
       next: (response: any) => {

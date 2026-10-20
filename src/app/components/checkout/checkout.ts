@@ -40,8 +40,7 @@ export class Checkout implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly http = inject(HttpClient);
   private readonly changeDetector = inject(ChangeDetectorRef);
-  private readonly webhookUrl =
-    'https://somewhat-jones-marion-guru.trycloudflare.com/webhook/pago-exitoso';
+  private readonly webhookUrl ='https://198-46-233-201.sslip.io//webhook/pago-exitoso';
 
   readonly copyrightYear = new Date().getFullYear();
   readonly headerImageUrl =
