@@ -1,3 +1,4 @@
+// Configuración global: registra el enrutador, las peticiones HTTP y los manejadores de errores.
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';

@@ -1,3 +1,4 @@
+// Carga y guarda sectores de interés asociados al token y aplica el límite del plan estándar.
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';

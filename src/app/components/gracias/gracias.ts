@@ -1,3 +1,4 @@
+// Expone los datos de presentación y acciones de la pantalla de registro exitoso.
 import { Component } from '@angular/core';
 
 // Pantalla independiente mostrada después de que el registro termina correctamente.

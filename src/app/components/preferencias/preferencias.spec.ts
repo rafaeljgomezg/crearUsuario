@@ -1,3 +1,4 @@
+// Pruebas de carga y selección de sectores, incluido el límite del plan estándar.
 import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';

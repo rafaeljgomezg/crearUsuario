@@ -1,3 +1,4 @@
+// Valida el token de acceso con el servicio remoto y dirige a la configuración de preferencias.
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';

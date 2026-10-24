@@ -1,3 +1,4 @@
+// Pruebas del formulario de alta, sus validaciones y el selector internacional de teléfono.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CargausuarioForm } from './cargausuario-form';
 

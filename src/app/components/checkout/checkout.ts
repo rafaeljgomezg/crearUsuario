@@ -1,3 +1,4 @@
+// Gestiona la selección de plan y el envío de la solicitud de pago, incluidos sus estados.
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
@@ -65,7 +66,12 @@ export class Checkout implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userId = this.route.snapshot.queryParamMap.get('userId')?.trim() ?? '';
+    const queryParams = this.route.snapshot.queryParamMap;
+    this.userId =
+      queryParams.get('userId')?.trim() ?? queryParams.get('id')?.trim() ?? '';
+
+    const plan = queryParams.get('plan');
+    this.selectedPlan = plan === 'STANDARD' || plan === 'CORPORATE' ? plan : '';
   }
 
   onSubmit(form: NgForm): void {

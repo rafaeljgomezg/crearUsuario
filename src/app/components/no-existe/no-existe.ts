@@ -1,3 +1,4 @@
+// Componente de la ruta 404; proporciona el año vigente para el pie de página.
 import { Component } from '@angular/core';
 
 @Component({

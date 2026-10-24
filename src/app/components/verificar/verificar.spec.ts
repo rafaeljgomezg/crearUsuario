@@ -1,3 +1,4 @@
+// Pruebas de la pantalla de verificación y del comportamiento ante la falta de token.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';

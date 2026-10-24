@@ -1,3 +1,4 @@
+// Componente raíz: proporciona el contenedor desde el que se muestran las rutas.
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 

@@ -1,3 +1,4 @@
+// Prueba que la pantalla 404 informa del error y enlaza con el inicio.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoExiste } from './no-existe';
 

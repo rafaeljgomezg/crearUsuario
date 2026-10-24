@@ -1,3 +1,4 @@
+// Lógica del alta de usuarios: valida datos y teléfono antes de enviarlos al servicio de registro.
 import { Component, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';

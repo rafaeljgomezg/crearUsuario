@@ -1,3 +1,4 @@
+// Pruebas del componente raíz y de la presencia del contenedor de rutas.
 import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 

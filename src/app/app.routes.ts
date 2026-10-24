@@ -1,3 +1,4 @@
+// Mapa de rutas de la aplicación; carga cada pantalla bajo demanda y define el fallback 404.
 import { Routes } from '@angular/router';
 
 // Las pantallas se cargan bajo demanda para separar sus recursos del paquete inicial.

@@ -1,3 +1,4 @@
+// Recupera el correo de la ruta para contextualizar el aviso de usuario ya registrado.
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 

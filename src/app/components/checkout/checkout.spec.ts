@@ -1,3 +1,4 @@
+// Pruebas de precios, selección de pago, validación y respuestas del checkout.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
@@ -17,7 +18,15 @@ describe('Checkout', () => {
         provideHttpClientTesting(),
         {
           provide: ActivatedRoute,
-          useValue: { snapshot: { queryParamMap: convertToParamMap({ userId: 'user-123' }) } },
+          useValue: {
+            snapshot: {
+              queryParamMap: convertToParamMap({
+                token: 'token-123',
+                plan: 'STANDARD',
+                id: 'user-123',
+              }),
+            },
+          },
         },
       ],
     }).compileComponents();
@@ -32,6 +41,8 @@ describe('Checkout', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(component.userId).toBe('user-123');
+    expect(component.selectedPlan).toBe('STANDARD');
   });
 
   it.each([

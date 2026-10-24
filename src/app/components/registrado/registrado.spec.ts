@@ -1,3 +1,4 @@
+// Pruebas del aviso de cuenta existente con y sin correo en los parámetros de ruta.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { Registrado } from './registrado';
