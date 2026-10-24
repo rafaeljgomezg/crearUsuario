@@ -14,7 +14,8 @@
             <h1 class="text-xl font-bold text-slate-900">No se pudo iniciar el checkout</h1>
             <p class="mt-2 text-sm leading-6 text-red-800">
               Falta el identificador del usuario. Abre el enlace con el parámetro
-              <span class="font-semibold">id</span> o <span class="font-semibold">userId</span>.
+              <span class="font-semibold">id</span> o
+              <span class="font-semibold">userId</span>.
             </p>
           </div>
         } @else if (isLoading) {
@@ -73,18 +74,20 @@
               </svg>
             </div>
             <h1 class="text-2xl font-bold text-slate-900">¡Solicitud enviada!</h1>
-            <p class="mt-3 text-sm leading-6 text-slate-600">
-              La transacción de tu plan
+            <div class="mt-3 text-sm leading-6 text-slate-600">
+              <p>La transacción de tu plan
               <span class="font-semibold text-slate-800">{{ selectedPlan }}</span>,
               periodo <span class="font-semibold text-slate-800">{{ selectedPeriodo }}</span>
               por <span class="font-semibold text-slate-800">USD {{ selectedPrice }}</span> y método
               de pago <span class="font-semibold text-slate-800">{{ selectedMetodo }}</span> está en
-              proceso. Envía el pago a
-              <span class="font-semibold text-slate-800">{{ paymentEmail }}</span>. Te enviaremos
-              un correo electrónico con el resultado final, ya sea aprobada o rechazada. Puedes
-              cerrar esta página con seguridad; no es necesario mantenerla abierta. Si necesitas
-              realizar otro intento, deberás iniciar nuevamente el proceso.
-            </p>
+              proceso. 
+              Envía el pago anexo anexo a este correo: <span class="font-semibold text-slate-800">{{ paymentEmail }}</span>. Te enviaremos
+              un correo electrónico con el resultado final, ya sea aprobada o rechazada.  Si necesitas
+              realizar otro intento, deberás iniciar nuevamente el proceso.</p>
+              <hr class="-bg-slate-200 my-4 h-px border-0 bg-slate-200">
+              <div class="text-slate-600 italic">
+              </div>
+            </div>
           </section>
         } @else {
           <header class="mb-7">
