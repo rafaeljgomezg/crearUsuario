@@ -155,4 +155,59 @@ describe('CargausuarioForm', () => {
       queryParams: { email: 'maria@example.com' },
     });
   });
+
+  it('displays the error message returned by n8n for a rejected Turnstile token', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+    component.onTurnstileResolved('turnstile-test-token');
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne(
+      'https://198-46-233-201.sslip.io/webhook/crear-usuario',
+    );
+    request.flush(
+      {
+        status: 'error',
+        code: 'TURNSTILE_REJECTED',
+        message: 'No pudimos validar la verificación de seguridad.',
+      },
+      { status: 403, statusText: 'Forbidden' },
+    );
+
+    fixture.detectChanges();
+    expect(component.submitError).toBe('No pudimos validar la verificación de seguridad.');
+    expect(fixture.nativeElement.textContent).toContain(
+      'No pudimos validar la verificación de seguridad.',
+    );
+    expect(component.isSubmitting).toBe(false);
+  });
+
+  it('shows a generic message when the server error has no message', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+    component.onTurnstileResolved('turnstile-test-token');
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne(
+      'https://198-46-233-201.sslip.io/webhook/crear-usuario',
+    );
+    request.flush(
+      { status: 'error' },
+      { status: 403, statusText: 'Forbidden' },
+    );
+
+    expect(component.submitError).toBe(
+      'Hubo un error al procesar el registro. Por favor, intenta nuevamente.',
+    );
+  });
 });

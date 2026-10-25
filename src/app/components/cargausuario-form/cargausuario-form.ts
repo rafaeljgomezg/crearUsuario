@@ -57,6 +57,7 @@ export class CargausuarioForm {
   readonly turnstileSiteKey = '0x4AAAAAAFlfGOnqI4kYPFnP';
   turnstileToken: string | null = null;
   turnstileError = '';
+  submitError = '';
   isSubmitting = false;
   
   // Variantes de imagen de oficina seleccionadas aleatoriamente para el encabezado.
@@ -155,6 +156,7 @@ export class CargausuarioForm {
     const webhookUrl = 'https://198-46-233-201.sslip.io/webhook/crear-usuario';
 
     this.isSubmitting = true;
+    this.submitError = '';
     this.http.post<unknown>(webhookUrl, payload).subscribe({
       next: (response) => {
         this.isSubmitting = false;
@@ -165,11 +167,7 @@ export class CargausuarioForm {
 
         if (isRecord(response) && response['status'] === 'error') {
           this.resetTurnstile();
-          alert(
-            typeof response['message'] === 'string'
-              ? response['message']
-              : 'No se pudo procesar el registro.',
-          );
+          this.submitError = this.getResponseMessage(response);
           return;
         }
         // Si el registro es exitoso, navega a tu página de agradecimiento
@@ -188,7 +186,10 @@ export class CargausuarioForm {
         console.error('Error de conexión:', error);
         this.isSubmitting = false;
         this.resetTurnstile();
-        alert('Hubo un error al procesar el registro. Por favor, intenta nuevamente.');
+        this.submitError = this.getResponseMessage(
+          error instanceof HttpErrorResponse ? error.error : null,
+          'Hubo un error al procesar el registro. Por favor, intenta nuevamente.',
+        );
       }
     });
 
@@ -204,6 +205,20 @@ export class CargausuarioForm {
       response['status'] === 'already_registered' ||
       response['code'] === 'USER_ALREADY_EXISTS'
     );
+  }
+
+  private getResponseMessage(
+    response: unknown,
+    fallback = 'No se pudo procesar el registro.',
+  ): string {
+    if (isRecord(response) && typeof response['message'] === 'string') {
+      const message = response['message'].trim();
+      if (message) {
+        return message;
+      }
+    }
+
+    return fallback;
   }
 
   private navigateToRegistered(): void {
