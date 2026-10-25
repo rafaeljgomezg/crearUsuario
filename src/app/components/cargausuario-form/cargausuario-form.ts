@@ -1,6 +1,6 @@
 // Lógica del alta de usuarios: valida datos y teléfono antes de enviarlos al servicio de registro.
 import { Component, computed, signal, inject, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { NgxTurnstileComponent } from 'ngx-turnstile';
 import {
@@ -36,6 +36,10 @@ interface PhoneCountryOption {
   code: CountryCode;
   name: string;
   callingCode: string;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
 }
 
 @Component({
@@ -151,19 +155,36 @@ export class CargausuarioForm {
     const webhookUrl = 'https://198-46-233-201.sslip.io/webhook/crear-usuario';
 
     this.isSubmitting = true;
-    this.http.post(webhookUrl, payload).subscribe({
-      next: (response: any) => {
+    this.http.post<unknown>(webhookUrl, payload).subscribe({
+      next: (response) => {
         this.isSubmitting = false;
-        if (response.status === 'error') {
+        if (this.isAlreadyRegisteredResponse(response)) {
+          this.navigateToRegistered();
+          return;
+        }
+
+        if (isRecord(response) && response['status'] === 'error') {
           this.resetTurnstile();
-          // Muestra el mensaje devuelto por n8n (ej. usuario ya registrado)
-          alert(response.message);
+          alert(
+            typeof response['message'] === 'string'
+              ? response['message']
+              : 'No se pudo procesar el registro.',
+          );
           return;
         }
         // Si el registro es exitoso, navega a tu página de agradecimiento
         this.router.navigate(['/gracias']);
       },
-      error: (error) => {
+      error: (error: unknown) => {
+        if (
+          error instanceof HttpErrorResponse &&
+          (error.status === 409 || this.isAlreadyRegisteredResponse(error.error))
+        ) {
+          this.isSubmitting = false;
+          this.navigateToRegistered();
+          return;
+        }
+
         console.error('Error de conexión:', error);
         this.isSubmitting = false;
         this.resetTurnstile();
@@ -171,6 +192,25 @@ export class CargausuarioForm {
       }
     });
 
+  }
+
+  private isAlreadyRegisteredResponse(response: unknown): boolean {
+    if (!isRecord(response)) {
+      return false;
+    }
+
+    return (
+      response['status'] === 'exists' ||
+      response['status'] === 'already_registered' ||
+      response['code'] === 'USER_ALREADY_EXISTS'
+    );
+  }
+
+  private navigateToRegistered(): void {
+    this.resetTurnstile();
+    void this.router.navigate(['/registrado'], {
+      queryParams: { email: this.usuarioModel().email.trim() },
+    });
   }
 
   private resetTurnstile(): void {

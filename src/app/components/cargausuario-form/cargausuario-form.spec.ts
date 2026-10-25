@@ -110,4 +110,49 @@ describe('CargausuarioForm', () => {
     request.flush({ status: 'success' });
     expect(router.navigate).toHaveBeenCalledWith(['/gracias']);
   });
+
+  it('navigates to the registered page when n8n returns an existing-user status', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+    component.onTurnstileResolved('turnstile-test-token');
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne(
+      'https://198-46-233-201.sslip.io/webhook/crear-usuario',
+    );
+    request.flush({ status: 'exists' });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/registrado'], {
+      queryParams: { email: 'maria@example.com' },
+    });
+  });
+
+  it('navigates to the registered page when n8n returns HTTP 409', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+    component.onTurnstileResolved('turnstile-test-token');
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne(
+      'https://198-46-233-201.sslip.io/webhook/crear-usuario',
+    );
+    request.flush(
+      { status: 'error', code: 'USER_ALREADY_EXISTS' },
+      { status: 409, statusText: 'Conflict' },
+    );
+
+    expect(router.navigate).toHaveBeenCalledWith(['/registrado'], {
+      queryParams: { email: 'maria@example.com' },
+    });
+  });
 });
