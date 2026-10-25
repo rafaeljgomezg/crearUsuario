@@ -1,20 +1,34 @@
 // Pruebas del formulario de alta, sus validaciones y el selector internacional de teléfono.
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { Router } from '@angular/router';
 import { CargausuarioForm } from './cargausuario-form';
 
 describe('CargausuarioForm', () => {
   let component: CargausuarioForm;
   let fixture: ComponentFixture<CargausuarioForm>;
+  let httpTestingController: HttpTestingController;
+  let router: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    router = { navigate: vi.fn() };
     await TestBed.configureTestingModule({
       imports: [CargausuarioForm],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CargausuarioForm);
     component = fixture.componentInstance;
+    httpTestingController = TestBed.inject(HttpTestingController);
     await fixture.whenStable();
   });
+
+  afterEach(() => httpTestingController.verify());
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -54,5 +68,46 @@ describe('CargausuarioForm', () => {
     });
 
     expect(component.usuarioForm.telefono().invalid()).toBe(true);
+  });
+
+  it('requires a Turnstile token before sending the registration', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+
+    component.onSubmit();
+
+    expect(component.turnstileError).toContain('Completa la verificación');
+    httpTestingController.expectNone('https://198-46-233-201.sslip.io/webhook/crear-usuario');
+  });
+
+  it('sends the Turnstile token with the registration', () => {
+    component.usuarioModel.set({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      paisTelefono: 'VE',
+      telefono: '4121234567',
+    });
+    component.onTurnstileResolved('turnstile-test-token');
+
+    component.onSubmit();
+
+    const request = httpTestingController.expectOne(
+      'https://198-46-233-201.sslip.io/webhook/crear-usuario',
+    );
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({
+      nombre: 'María Pérez',
+      email: 'maria@example.com',
+      codigoPais: '+58',
+      telefono: '+584121234567',
+      turnstileToken: 'turnstile-test-token',
+    });
+
+    request.flush({ status: 'success' });
+    expect(router.navigate).toHaveBeenCalledWith(['/gracias']);
   });
 });

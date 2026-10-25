@@ -108,12 +108,24 @@
             }
           </div>
 
+          <div>
+            <ngx-turnstile
+              [siteKey]="turnstileSiteKey"
+              (resolved)="onTurnstileResolved($event)"
+              [responseField]="false"
+            ></ngx-turnstile>
+            @if (turnstileError) {
+              <p class="mt-2 text-sm text-red-700" role="alert">{{ turnstileError }}</p>
+            }
+          </div>
+
           <button
             class="mt-2 w-full rounded-lg bg-blue-800 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-800 active:bg-blue-950"
             type="button"
             (click)="onSubmit()"
+            [disabled]="isSubmitting"
           >
-            Crear usuario
+            {{ isSubmitting ? 'Enviando...' : 'Crear usuario' }}
           </button>
         </form>
       </div>

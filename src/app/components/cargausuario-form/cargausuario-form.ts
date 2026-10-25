@@ -1,7 +1,8 @@
 // Lógica del alta de usuarios: valida datos y teléfono antes de enviarlos al servicio de registro.
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, computed, signal, inject, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { NgxTurnstileComponent } from 'ngx-turnstile';
 import {
   email,
   form,
@@ -38,18 +39,21 @@ interface PhoneCountryOption {
 }
 
 @Component({
-  imports: [FormField],
+  imports: [FormField, NgxTurnstileComponent],
   selector: 'app-cargausuario-form',
   styleUrl: './cargausuario-form.scss',
   templateUrl: './cargausuario-form.html',
 })
 export class CargausuarioForm {
-
-  constructor() {}
-
   // Servicios inyectados para enviar el registro y navegar tras una respuesta exitosa.
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
+  @ViewChild(NgxTurnstileComponent) private turnstileWidget?: NgxTurnstileComponent;
+
+  readonly turnstileSiteKey = '0x4AAAAAAFlfGOnqI4kYPFnP';
+  turnstileToken: string | null = null;
+  turnstileError = '';
+  isSubmitting = false;
   
   // Variantes de imagen de oficina seleccionadas aleatoriamente para el encabezado.
   private readonly businessImageIds = [
@@ -103,9 +107,20 @@ export class CargausuarioForm {
     });
   });
 
+  onTurnstileResolved(token: string | null): void {
+    this.turnstileToken = token;
+    if (token) {
+      this.turnstileError = '';
+    }
+  }
+
   // Valida y normaliza los datos antes de enviarlos al webhook de registro.
   onSubmit() {
-   const formState = this.usuarioForm();
+    if (this.isSubmitting) {
+      return;
+    }
+
+    const formState = this.usuarioForm();
     if (formState.invalid()) {
       formState.markAsTouched();
       return;
@@ -118,19 +133,29 @@ export class CargausuarioForm {
       return;
     }
 
+    const turnstileToken = this.turnstileToken;
+    if (!turnstileToken) {
+      this.turnstileError = 'Completa la verificación de seguridad antes de continuar.';
+      return;
+    }
+
     const payload = {
       nombre: formValue.nombre.trim(),
       email: formValue.email.trim(),
       codigoPais: `+${getCountryCallingCode(formValue.paisTelefono)}`,
       telefono: phoneNumber.number, // Formato internacional limpio validado
+      turnstileToken,
     };
 
     // Reemplaza con la Production URL de tu nodo Webhook en n8n
     const webhookUrl = 'https://198-46-233-201.sslip.io/webhook/crear-usuario';
 
+    this.isSubmitting = true;
     this.http.post(webhookUrl, payload).subscribe({
       next: (response: any) => {
+        this.isSubmitting = false;
         if (response.status === 'error') {
+          this.resetTurnstile();
           // Muestra el mensaje devuelto por n8n (ej. usuario ya registrado)
           alert(response.message);
           return;
@@ -140,10 +165,17 @@ export class CargausuarioForm {
       },
       error: (error) => {
         console.error('Error de conexión:', error);
+        this.isSubmitting = false;
+        this.resetTurnstile();
         alert('Hubo un error al procesar el registro. Por favor, intenta nuevamente.');
       }
     });
 
+  }
+
+  private resetTurnstile(): void {
+    this.turnstileToken = null;
+    this.turnstileWidget?.reset();
   }
 
   getPhoneCallingCode(country: CountryCode): string {
