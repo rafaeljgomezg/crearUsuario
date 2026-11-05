@@ -42,18 +42,13 @@ describe('Checkout', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
     expect(component.userId).toBe('user-123');
-    expect(component.selectedPlan).toBe('STANDARD');
+    expect(component.selectedPlan).toBe('CORPORATE');
   });
 
   it.each([
-    ['STANDARD', 'mensual', 49],
-    ['STANDARD', 'trimestral', 130],
-    ['STANDARD', 'semestral', 240],
-    ['STANDARD', 'anual', 450],
-    ['CORPORATE', 'mensual', 99],
-    ['CORPORATE', 'trimestral', 270],
-    ['CORPORATE', 'semestral', 500],
-    ['CORPORATE', 'anual', 950],
+    ['CORPORATE', 'mensual', 10],
+    ['CORPORATE', 'semestral', 42],
+    ['CORPORATE', 'anual', 60],
   ] as const)('calculates the %s price for %s', (plan, periodo, price) => {
     component.selectedPlan = plan;
     component.selectedPeriodo = periodo;
@@ -73,7 +68,7 @@ describe('Checkout', () => {
       control: { markAllAsTouched: vi.fn() },
     } as never;
     component.selectedPlan = 'CORPORATE';
-    component.selectedPeriodo = 'trimestral';
+    component.selectedPeriodo = 'semestral';
     component.selectedMetodo = 'Zinli';
 
     component.onSubmit(form);
@@ -86,7 +81,7 @@ describe('Checkout', () => {
     expect(request.request.body).toEqual({
       UserID: 'user-123',
       plan: 'CORPORATE',
-      periodo: 'trimestral',
+      periodo: 'semestral',
       metodo: 'Zinli',
     });
 
@@ -104,7 +99,7 @@ describe('Checkout', () => {
       invalid: false,
       control: { markAllAsTouched: vi.fn() },
     } as never;
-    component.selectedPlan = 'STANDARD';
+    component.selectedPlan = 'CORPORATE';
     component.selectedPeriodo = 'mensual';
     component.selectedMetodo = 'Binance Pay';
 
@@ -125,7 +120,7 @@ describe('Checkout', () => {
       invalid: false,
       control: { markAllAsTouched: vi.fn() },
     } as never;
-    component.selectedPlan = 'STANDARD';
+    component.selectedPlan = 'CORPORATE';
     component.selectedPeriodo = 'mensual';
     component.selectedMetodo = 'Binance Pay';
 

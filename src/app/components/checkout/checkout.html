@@ -128,44 +128,6 @@
               />
             </div>
 
-            <fieldset [disabled]="isLoading">
-              <legend class="mb-3 text-sm font-semibold text-slate-800">Plan</legend>
-              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <label
-                  class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-checked:border-blue-800 has-checked:bg-blue-50"
-                >
-                  <input
-                    class="mt-1 size-4 accent-blue-800"
-                    type="radio"
-                    name="plan"
-                    value="STANDARD"
-                    [(ngModel)]="selectedPlan"
-                    required
-                  />
-                  <span>
-                    <span class="block font-semibold text-slate-900">STANDARD</span>
-                    <span class="mt-1 block text-sm text-slate-500">Para comenzar</span>
-                  </span>
-                </label>
-                <label
-                  class="flex cursor-pointer items-start gap-3 rounded-xl border border-slate-200 p-4 transition-colors hover:border-blue-300 hover:bg-slate-50 has-checked:border-blue-800 has-checked:bg-blue-50"
-                >
-                  <input
-                    class="mt-1 size-4 accent-blue-800"
-                    type="radio"
-                    name="plan"
-                    value="CORPORATE"
-                    [(ngModel)]="selectedPlan"
-                    required
-                  />
-                  <span>
-                    <span class="block font-semibold text-slate-900">CORPORATE</span>
-                    <span class="mt-1 block text-sm text-slate-500">Para equipos y empresas</span>
-                  </span>
-                </label>
-              </div>
-            </fieldset>
-
             <div>
               <label for="periodo" class="mb-2 block text-sm font-semibold text-slate-800">
                 Periodo de pago
@@ -180,7 +142,6 @@
               >
                 <option value="" disabled>Selecciona un periodo</option>
                 <option value="mensual">Mensual</option>
-                <option value="trimestral">Trimestral</option>
                 <option value="semestral">Semestral</option>
                 <option value="anual">Anual</option>
               </select>

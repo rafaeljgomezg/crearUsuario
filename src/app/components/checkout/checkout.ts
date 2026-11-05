@@ -5,8 +5,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { timeout } from 'rxjs';
 
-type Plan = 'STANDARD' | 'CORPORATE';
-type Periodo = 'mensual' | 'trimestral' | 'semestral' | 'anual';
+type Plan = 'CORPORATE';
+type Periodo = 'mensual' | 'semestral' | 'anual';
 type Metodo = 'Binance Pay' | 'Zinli';
 
 interface CheckoutPayload {
@@ -17,17 +17,10 @@ interface CheckoutPayload {
 }
 
 const PLAN_PRICES: Record<Plan, Record<Periodo, number>> = {
-  STANDARD: {
-    mensual: 49,
-    trimestral: 130,
-    semestral: 240,
-    anual: 450,
-  },
   CORPORATE: {
-    mensual: 99,
-    trimestral: 270,
-    semestral: 500,
-    anual: 950,
+    mensual: 10,
+    semestral: 42,
+    anual: 60,
   },
 };
 
@@ -49,7 +42,7 @@ export class Checkout implements OnInit {
   readonly paymentEmail = 'rafaeljgomezg@gmail.com';
 
   userId = '';
-  selectedPlan: Plan | '' = '';
+  selectedPlan: Plan = 'CORPORATE';
   selectedPeriodo: Periodo | '' = '';
   selectedMetodo: Metodo | '' = '';
   isLoading = false;
@@ -69,9 +62,8 @@ export class Checkout implements OnInit {
     const queryParams = this.route.snapshot.queryParamMap;
     this.userId =
       queryParams.get('userId')?.trim() ?? queryParams.get('id')?.trim() ?? '';
-
-    const plan = queryParams.get('plan');
-    this.selectedPlan = plan === 'STANDARD' || plan === 'CORPORATE' ? plan : '';
+    // Solo existe un plan (CORPORATE) con acceso completo.
+    this.selectedPlan = 'CORPORATE';
   }
 
   onSubmit(form: NgForm): void {
