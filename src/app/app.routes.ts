@@ -1,5 +1,6 @@
 // Mapa de rutas de la aplicación; carga cada pantalla bajo demanda y define el fallback 404.
 import { Routes } from '@angular/router';
+import { checkoutResolver } from './components/checkout/checkout.resolver';
 
 // Las pantallas se cargan bajo demanda para separar sus recursos del paquete inicial.
 export const routes: Routes = [
@@ -30,6 +31,9 @@ export const routes: Routes = [
     {
         path: 'checkout',
         loadComponent: () => import('./components/checkout/checkout').then(m => m.Checkout),
+        resolve: {
+          checkoutData: checkoutResolver,
+        },
     },
 
     {

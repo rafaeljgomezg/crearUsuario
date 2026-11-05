@@ -17,6 +17,11 @@ interface CheckoutPayload {
   metodo: Metodo;
 }
 
+interface CheckoutData {
+  userId: string;
+  nombre: string;
+}
+
 const PLAN_PRICES: Record<Plan, Record<Periodo, number>> = {
   CORPORATE: {
     mensual: 10,
@@ -36,10 +41,6 @@ export class Checkout implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly webhookUrl ='https://198-46-233-201.sslip.io/webhook/pago-exitoso';
-
-  // Configuración de Supabase para consultar el nombre del usuario cuando no viene por query parameter
-  private readonly supabaseUrl = 'https://vwcmgzmlfeowxmnphzdm.supabase.co';
-  private readonly supabaseAnonKey = 'sb_publishable_y3h4LsnTqIclad_E6_7apQ_i2OE6v2x';
 
   readonly copyrightYear = new Date().getFullYear();
   readonly headerImageUrl =
@@ -65,46 +66,13 @@ export class Checkout implements OnInit {
   }
 
   ngOnInit(): void {
-    const queryParams = this.route.snapshot.queryParamMap;
-    this.userId =
-      queryParams.get('userId')?.trim() ?? queryParams.get('id')?.trim() ?? '';
-    this.nombre = queryParams.get('nombre')?.trim() ?? '';
-
-    // Si no viene el nombre por query parameter, consultarlo desde Supabase
-    if (this.userId && !this.nombre) {
-      this.obtenerNombreDesdeSupabase(this.userId);
-    }
+    // Los datos ya fueron cargados por el resolver antes de activar la ruta
+    const data = this.route.snapshot.data['checkoutData'] as CheckoutData;
+    this.userId = data.userId;
+    this.nombre = data.nombre;
 
     // Solo existe un plan (CORPORATE) con acceso completo.
     this.selectedPlan = 'CORPORATE';
-  }
-
-  /**
-   * Consulta el nombre del usuario en Supabase usando su ID.
-   * Si falla, se deja nombre vacío y el campo mostrará el userId como respaldo.
-   */
-  private obtenerNombreDesdeSupabase(userId: string): void {
-    const url = `${this.supabaseUrl}/rest/v1/usuarios?id=eq.${userId}&select=nombre`;
-
-    this.http
-      .get<{ nombre: string }[]>(url, {
-        headers: {
-          apikey: this.supabaseAnonKey,
-          Authorization: `Bearer ${this.supabaseAnonKey}`,
-        },
-      })
-      .subscribe({
-        next: (response) => {
-          if (response.length > 0 && response[0].nombre) {
-            this.nombre = response[0].nombre.trim();
-            this.changeDetector.markForCheck();
-          }
-        },
-        error: () => {
-          // Si falla la consulta, nombre queda vacío y se mostrará el userId como respaldo
-          console.warn('No se pudo obtener el nombre desde Supabase.');
-        },
-      });
   }
 
   onSubmit(form: NgForm): void {

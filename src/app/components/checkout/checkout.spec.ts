@@ -26,6 +26,9 @@ describe('Checkout', () => {
                 id: 'user-123',
                 nombre: 'Juan Pérez',
               }),
+              data: {
+                checkoutData: { userId: 'user-123', nombre: 'Juan Pérez' },
+              },
             },
           },
         },
