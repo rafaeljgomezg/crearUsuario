@@ -97,6 +97,7 @@ export class Checkout implements OnInit {
         next: (response) => {
           if (response.length > 0 && response[0].nombre) {
             this.nombre = response[0].nombre.trim();
+            this.changeDetector.markForCheck();
           }
         },
         error: () => {
