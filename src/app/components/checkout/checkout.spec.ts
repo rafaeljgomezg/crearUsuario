@@ -24,6 +24,7 @@ describe('Checkout', () => {
                 token: 'token-123',
                 plan: 'STANDARD',
                 id: 'user-123',
+                nombre: 'Juan Pérez',
               }),
             },
           },
@@ -80,6 +81,7 @@ describe('Checkout', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({
       UserID: 'user-123',
+      nombre: 'Juan Pérez',
       plan: 'CORPORATE',
       periodo: 'semestral',
       metodo: 'Zinli',

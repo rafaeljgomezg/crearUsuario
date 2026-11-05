@@ -11,6 +11,7 @@ type Metodo = 'Binance Pay' | 'Zinli';
 
 interface CheckoutPayload {
   UserID: string;
+  nombre: string;
   plan: Plan;
   periodo: Periodo;
   metodo: Metodo;
@@ -86,6 +87,7 @@ export class Checkout implements OnInit {
 
     const payload: CheckoutPayload = {
       UserID: this.userId,
+      nombre: this.nombre,
       plan: this.selectedPlan,
       periodo: this.selectedPeriodo,
       metodo: this.selectedMetodo,
