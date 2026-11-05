@@ -42,6 +42,7 @@ export class Checkout implements OnInit {
   readonly paymentEmail = 'rafaeljgomezg@gmail.com';
 
   userId = '';
+  nombre = '';
   selectedPlan: Plan = 'CORPORATE';
   selectedPeriodo: Periodo | '' = '';
   selectedMetodo: Metodo | '' = '';
@@ -62,6 +63,7 @@ export class Checkout implements OnInit {
     const queryParams = this.route.snapshot.queryParamMap;
     this.userId =
       queryParams.get('userId')?.trim() ?? queryParams.get('id')?.trim() ?? '';
+    this.nombre = queryParams.get('nombre')?.trim() ?? '';
     // Solo existe un plan (CORPORATE) con acceso completo.
     this.selectedPlan = 'CORPORATE';
   }
