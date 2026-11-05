@@ -115,17 +115,33 @@
             class="space-y-6"
             [attr.aria-busy]="isLoading"
           >
-            <div>
-              <label for="userId" class="mb-2 block text-sm font-semibold text-slate-800">
-                Usuario
-              </label>
-              <input
-                id="userId"
-                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
-                type="text"
-                [value]="nombre || userId"
-                readonly
-              />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              @if (nombre) {
+                <div>
+                  <label for="nombre" class="mb-2 block text-sm font-semibold text-slate-800">
+                    Nombre
+                  </label>
+                  <input
+                    id="nombre"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+                    type="text"
+                    [value]="nombre"
+                    readonly
+                  />
+                </div>
+              }
+              <div>
+                <label for="userId" class="mb-2 block text-sm font-semibold text-slate-800">
+                  ID de Usuario
+                </label>
+                <input
+                  id="userId"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600"
+                  type="text"
+                  [value]="userId"
+                  readonly
+                />
+              </div>
             </div>
 
             <div>
